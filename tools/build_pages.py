@@ -4,6 +4,8 @@ import json, os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = 'https://parikshalab.in/'
 WA = 'https://wa.me/918088158012?text=Hello%20ParikshaLab%2C%20I%20would%20like%20a%20demo%20for%20my%20institution.'
+WA_STU = {'NEET': 'https://wa.me/918088158012?text=Hi%20ParikshaLab%2C%20I%20am%20a%20NEET%20aspirant.%20Please%20add%20me%20to%20early%20access%20for%20the%20free%20NEET%20mock%20tests.',
+          'JEE': 'https://wa.me/918088158012?text=Hi%20ParikshaLab%2C%20I%20am%20a%20JEE%20aspirant.%20Please%20add%20me%20to%20early%20access%20for%20the%20free%20JEE%20Main%20mock%20tests.'}
 
 P = {
  'arrow': '<path d="M5 12h14M13 6l6 6-6 6"/>',
@@ -68,6 +70,20 @@ def cta(title, text):
   </div>
 </section>'''
 
+def faq(items, title='Frequently asked questions'):
+    qs = ''.join(f'<details class="faq-item"><summary>{q}</summary><p>{a}</p></details>' for q, a in items)
+    return f'''
+<section>
+  <div class="wrap" style="max-width:860px">
+    <div class="sec-head center" data-reveal><h2>{title}</h2></div>
+    <div class="faq" data-reveal>{qs}</div>
+  </div>
+</section>'''
+def faq_ld(items):
+    import re
+    strip = lambda t: re.sub(r'<[^>]+>', '', t).replace('&amp;', '&').replace('&minus;', '-').replace('&nbsp;', ' ')
+    return {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": strip(q), "acceptedAnswer": {"@type": "Answer", "text": strip(a)}} for q, a in items]}
+
 NAV = [('index.html', 'Home'), ('platform.html', 'Platform'), ('qbank.html', 'QBank Studio'), ('reports.html', 'Reports'), ('apps.html', 'Apps'), ('about.html', 'About')]
 
 def page(fname, title, desc, body, ld=None, index=True):
@@ -126,9 +142,10 @@ def page(fname, title, desc, body, ld=None, index=True):
     <div class="foot">
       <div>
         <a class="brand" href="index.html"><span>Pariksha<b>Lab</b></span></a>
-        <p>Computer based tests, a NEET and JEE Main question bank and result reports for schools and coaching institutes across India.</p>
+        <p>CBT mock test platform, NEET and JEE Main question bank and result reports for schools and coaching institutes across India.</p>
       </div>
       <div><h4>Product</h4><ul><li><a href="platform.html">Exam platform</a></li><li><a href="qbank.html">QBank Studio</a></li><li><a href="reports.html">Result reports</a></li><li><a href="apps.html">Apps</a></li></ul></div>
+      <div><h4>For students</h4><ul><li><a href="neet-mock-test.html">NEET mock tests</a></li><li><a href="jee-main-mock-test.html">JEE Main mock tests</a></li></ul></div>
       <div><h4>Company</h4><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li><li><a href="contact.html">Book a demo</a></li></ul></div>
       <div><h4>Reach us</h4><ul><li><a href="{WA}" target="_blank" rel="noopener">WhatsApp +91 80881 58012</a></li><li><a href="tel:+918088158012">+91 80881 58012</a></li><li><a href="mailto:admin.parikshalab@gmail.com">admin.parikshalab@gmail.com</a></li></ul></div>
     </div>
@@ -149,7 +166,7 @@ def phero(eyebrow, h1, lede, extra=''):
   {AURORA}
   <div class="wrap z">
     <div class="sec-head center" style="margin-bottom:0" data-stagger>
-      <h1>{h1}</h1>
+      <h1><span class="kicker">{eyebrow}</span>{h1}</h1>
       <p class="lede">{lede}</p>
       {extra}
     </div>
@@ -164,13 +181,21 @@ GROWTH = '''
     </div>'''
 
 # ---------------------------------------------------------------- HOME
+HOME_FAQ = [
+ ('What is a CBT mock test platform?', 'A computer based test (CBT) platform lets students sit mock tests on a screen instead of an OMR sheet, with the same layout, buttons, timer and question palette as the NTA exam. ParikshaLab gives your institute that exam screen, a NEET and JEE Main question bank to build tests from, and a result report after every attempt.'),
+ ('Can we run tests under our own institute name?', 'Yes. Your logo and colours appear on the login page, the exam screen and every report, and the platform can run on your own web address such as cbt.yourschool.in.'),
+ ('Do we need a computer lab?', 'No. Students can take tests on Android or iOS phones, tablets, or any modern browser on Windows, Mac, Chromebook or Linux. If you have a lab, the same tests run there too.'),
+ ('Which exams does ParikshaLab cover?', 'NEET UG and JEE Main, on the official paper pattern. The bank has 21,783 NEET UG and 11,476 JEE Main questions with answer keys and explanations, and new questions are added every week.'),
+ ('Can teachers add their own questions?', 'Yes. Teachers can add a question from a screenshot or type it in, tag it by subject, chapter and difficulty, and use it in any paper. Your questions stay private to your institute.'),
+ ('How long does it take to get started?', 'Usually a few days. We run a free demo test with one of your batches, set up your branded site, and you can start building papers in QBank Studio right away.'),
+]
 home = f'''
 <section class="hero">
   {AURORA}
   <div class="wrap hero-grid z">
     <div>
-      <h1 data-reveal="lines"><span class="hl"><span>The exam hall,</span></span><span class="hl"><span class="grad">on every screen.</span></span></h1>
-      <p class="lede" data-reveal style="--d:.3s">A 33,000+ question bank that grows every week, a studio that builds a full paper in minutes, and an exam engine that feels exactly like the real one. On Android, iOS and any browser.</p>
+      <h1 data-reveal="lines"><span class="kicker">CBT mock test platform for NEET &amp; JEE coaching institutes</span><span class="hl"><span>The exam hall,</span></span><span class="hl"><span class="grad">on every screen.</span></span></h1>
+      <p class="lede" data-reveal style="--d:.3s">Online test software for schools and coaching institutes: a 33,000+ NEET and JEE Main question bank that grows every week, a studio that builds a full mock test in minutes, and an NTA-style CBT engine that feels exactly like the real exam. On Android, iOS and any browser.</p>
       <div class="hero-cta" data-reveal style="--d:.42s">
         <a class="btn btn-primary" href="contact.html">Book a campus demo {svg("arrow")}</a>
         <a class="btn btn-ghost" href="platform.html">Take the tour</a>
@@ -183,7 +208,7 @@ home = f'''
     </div>
     <div class="stage" data-tilt data-reveal="zoom" style="--d:.2s">
       <div class="glow-ring"></div>
-      {laptop("04_jee_palette_in_use", "JEE Main mock in progress on a laptop, with a graph based question and the colour coded question palette", eager=True)}
+      {laptop("04_jee_palette_in_use", "JEE Main CBT mock test in progress on a laptop, with a graph based question and the NTA-style colour coded question palette", eager=True)}
       {phone("03_jee_question", "The same JEE Main test on a phone", eager=True)}
       <div class="chip-float" style="left:-34px;bottom:8%"><span class="ic g">{svg("cloud")}</span><div>Sync: Saved<small>Every answer, every click</small></div></div>
     </div>
@@ -212,7 +237,7 @@ home = f'''
   <div class="wrap split wide">
     <div class="stage" data-tilt data-reveal="zoom">
       <div class="glow-ring"></div>
-      {laptop("07_neet_physics", "NEET UG physics question with a logic gate circuit diagram, as students see it")}
+      {laptop("07_neet_physics", "NEET UG mock test physics question with a logic gate circuit diagram, on the CBT exam screen")}
     </div>
     <div data-reveal>
       <h2>This is what your students see.</h2>
@@ -257,6 +282,20 @@ home = f'''
     <div class="center">{arrow_link("qbank.html", "Explore QBank Studio")}</div>
   </div>
 </section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head center" data-reveal>
+      <h2>Preparing on your own? <span class="grad">Free mocks are coming.</span></h2>
+      <p class="lede">We are opening ParikshaLab to students directly: full syllabus NEET and JEE Main mock tests on the real CBT screen, with the first mocks free.</p>
+    </div>
+    <div class="grid g2" data-stagger>
+      <a class="card pillar" href="neet-mock-test.html"><span class="ic g">{svg("target")}</span><h3>NEET mock tests</h3><p>180 questions, 720 marks, Physics, Chemistry, Botany and Zoology on the official pattern.</p><span class="link-arrow">Get early access {svg("arrow")}</span></a>
+      <a class="card pillar" href="jee-main-mock-test.html"><span class="ic v">{svg("sigma")}</span><h3>JEE Main mock tests</h3><p>75 questions, 300 marks, MCQ and numerical answers in Physics, Chemistry and Mathematics.</p><span class="link-arrow">Get early access {svg("arrow")}</span></a>
+    </div>
+  </div>
+</section>
+{faq(HOME_FAQ, 'Questions institutes ask us')}
 {cta("See a live test running in your own lab.", "We run a full mock with one of your batches, then walk your team through the reports it produces. No cost, no commitment.")}
 '''
 ld = {"@context": "https://schema.org", "@graph": [
@@ -266,9 +305,10 @@ ld = {"@context": "https://schema.org", "@graph": [
    "contactPoint": {"@type": "ContactPoint", "telephone": "+91-8088158012", "email": "admin.parikshalab@gmail.com", "contactType": "sales", "areaServed": "IN", "availableLanguage": ["en", "hi"]}},
   {"@type": "SoftwareApplication", "name": "ParikshaLab", "applicationCategory": "EducationalApplication", "operatingSystem": "Android, iOS, Web browser", "url": SITE,
    "description": "NTA-style computer based test engine with a 33,000+ question NEET and JEE Main bank, QBank Studio for building papers, and detailed student result reports.",
-   "offers": {"@type": "Offer", "priceCurrency": "INR", "availability": "https://schema.org/InStock"}}]}
-page('index.html', 'ParikshaLab | CBT platform and question bank for NEET and JEE Main',
-     'NTA-style computer based tests on Android, iOS and any browser, a 33,000+ question NEET and JEE bank that grows every week, QBank Studio and detailed result reports for schools and coaching institutes.', home, ld)
+   "offers": {"@type": "Offer", "priceCurrency": "INR", "availability": "https://schema.org/InStock"}},
+  faq_ld(HOME_FAQ)]}
+page('index.html', 'NEET & JEE CBT Mock Test Platform for Coaching Institutes | ParikshaLab',
+     'Online CBT mock test software for schools and coaching institutes: NTA-style NEET and JEE Main tests on Android, iOS and web, a 33,000+ question bank, QBank Studio and instant result reports.', home, ld)
 
 # ---------------------------------------------------------------- PLATFORM
 TOUR = [
@@ -298,7 +338,7 @@ subj_panels = ''.join(f'''
         <div class="stage" style="max-width:960px;margin-inline:auto">{laptop(n, s + " question on the exam screen")}</div>
         <p class="center muted" style="margin-top:24px">{t}</p>
       </div>''' for i, (s, n, t) in enumerate(SUBJ))
-platform = phero('Exam platform', 'An exam engine that behaves <span class="grad">like the real one.</span>',
+platform = phero('NTA-style CBT exam platform', 'An exam engine that behaves <span class="grad">like the real one.</span>',
   'Scroll through a real test, from login to result. Every screen below is taken straight from the platform.') + f'''
 <section style="padding-top:40px">
   <div class="wrap tour">
@@ -352,10 +392,10 @@ platform = phero('Exam platform', 'An exam engine that behaves <span class="grad
 </section>
 {cta("Put this screen in front of your students.", "We will set up a test for one of your batches and show you the results the same day.")}
 '''
-page('platform.html', 'Exam platform | ParikshaLab', 'A tour of the ParikshaLab exam engine: NTA-style screen, five-state palette, typeset equations, sharp diagrams, auto-save, safe resume and instant results.', platform)
+page('platform.html', 'NTA-Style CBT Exam Platform for NEET & JEE Main | ParikshaLab', 'A tour of the ParikshaLab computer based test engine for NEET and JEE Main mock tests: NTA-style screen, five-state palette, typeset equations, sharp diagrams, auto-save, safe resume and instant results.', platform)
 
 # ---------------------------------------------------------------- QBANK
-qbank = phero('QBank Studio', 'A big question bank, and a studio to <span class="grad">build from it.</span>',
+qbank = phero('NEET &amp; JEE question bank and test paper generator', 'A big question bank, and a studio to <span class="grad">build from it.</span>',
   'Every institution gets its own QBank Studio. Build a full syllabus mock or a one chapter test in minutes, from our bank, your own questions, or both.') + f'''
 <section style="padding-top:30px">
   <div class="wrap">
@@ -442,12 +482,12 @@ qbank = phero('QBank Studio', 'A big question bank, and a studio to <span class=
 </section>
 {cta("Build your first paper with us, live.", "In a 30 minute call we build a NEET or JEE Main paper from the bank, add one of your own questions, and deploy it to a test batch.")}
 '''
-page('qbank.html', 'QBank Studio | ParikshaLab', 'QBank Studio: 21,783 NEET UG and 11,476 JEE Main questions with keys and explanations, and new questions added every week. Generate a paper in minutes, check it, deploy it, and add your own questions from a screenshot.', qbank)
+page('qbank.html', 'NEET & JEE Question Bank and Test Paper Generator | QBank Studio', 'QBank Studio: 21,783 NEET UG and 11,476 JEE Main questions with keys and explanations, and new questions added every week. Generate a paper in minutes, check it, deploy it, and add your own questions from a screenshot.', qbank)
 
 # ---------------------------------------------------------------- REPORTS
 tb = [30, 38, 22, 44, 32, 26, 36, 28, 92, 34, 20, 40, 30, 36, 26]
 tbars = ''.join(f'<i style="--h:{h}%"{" class=\"slow\"" if h > 80 else ""}></i>' for h in tb)
-reports = phero('Result reports', 'Every attempt answers one question: <span class="grad">what next?</span>',
+reports = phero('Mock test result analysis', 'Every attempt answers one question: <span class="grad">what next?</span>',
   'The moment a student submits, they get a result report to review on screen or download as a PDF. It shows not just the score, but where it came from.') + f'''
 <section style="padding-top:40px">
   <div class="wrap split">
@@ -517,7 +557,7 @@ reports = phero('Result reports', 'Every attempt answers one question: <span cla
 </section>
 {cta("See a real report from your own students.", "Run one free mock with a batch and we will walk your team through every report it produces.")}
 '''
-page('reports.html', 'Result reports | ParikshaLab', 'Instant scores and a detailed result report after every test: where the marks came from, subject split, time per question, answer review and a one tap PDF.', reports)
+page('reports.html', 'Mock Test Result Analysis and Reports | ParikshaLab', 'Instant scores and a detailed result analysis after every NEET and JEE mock test: where the marks came from, subject split, time per question, answer review and a one tap PDF.', reports)
 
 # ---------------------------------------------------------------- APPS
 PH = [('01_login', 'Sign in', 'Mobile number and password'), ('02_test_list', 'Your tests', 'Start or resume with one tap'),
@@ -530,7 +570,7 @@ apps = f'''
   {AURORA}
   <div class="wrap z split">
     <div data-stagger>
-      <h1>Open to <span class="grad">everything.</span></h1>
+      <h1><span class="kicker">CBT test app for Android, iOS and web</span>Open to <span class="grad">everything.</span></h1>
       <p class="lede">ParikshaLab runs as an app on Android and iOS, and in any modern browser on Windows, Mac, Chromebook or Linux. No lab setup, no special machines.</p>
       <div class="hero-cta"><a class="btn btn-primary" href="contact.html">Get it for your institute {svg("arrow")}</a></div>
     </div>
@@ -580,7 +620,7 @@ apps = f'''
 </section>
 {cta("Bring your students onto one platform.", "Android, iOS and the browser, all under your institution's name.")}
 '''
-page('apps.html', 'Apps for Android, iOS and the web | ParikshaLab', 'ParikshaLab runs as an app on Android and iOS and in any modern browser. See real screens of NEET and JEE Main tests on a phone.', apps)
+page('apps.html', 'CBT Mock Test App for Android, iOS and Web | ParikshaLab', 'ParikshaLab runs as an app on Android and iOS and in any modern browser. See real screens of NEET and JEE Main tests on a phone.', apps)
 
 # ---------------------------------------------------------------- ABOUT
 about = phero('About ParikshaLab', 'Built for the institutes that prepare <span class="grad">India\'s doctors and engineers.</span>',
@@ -628,10 +668,10 @@ about = phero('About ParikshaLab', 'Built for the institutes that prepare <span 
 </section>
 {cta("Let's talk about your batches.", "Tell us how many students you have and which exams they are preparing for. We will take it from there.")}
 '''
-page('about.html', 'About | ParikshaLab', 'ParikshaLab helps Indian schools and coaching institutes prepare students for NEET and JEE on the same kind of screen they will face on exam day. White labelled and live in days.', about)
+page('about.html', 'About ParikshaLab | CBT Platform for NEET & JEE Institutes', 'ParikshaLab helps Indian schools and coaching institutes prepare students for NEET and JEE on the same kind of screen they will face on exam day. White labelled and live in days.', about)
 
 # ---------------------------------------------------------------- CONTACT
-contact = phero('Contact', 'See a live test in <span class="grad">your own lab.</span>',
+contact = phero('Book a free demo', 'See a live test in <span class="grad">your own lab.</span>',
   'Book a free demo. We run a full mock with one of your batches, then walk your team through the reports. No cost, no commitment.') + f'''
 <section style="padding-top:30px">
   <div class="wrap">
@@ -662,16 +702,120 @@ contact = phero('Contact', 'See a live test in <span class="grad">your own lab.<
   </div>
 </section>
 '''
-page('contact.html', 'Contact and demo | ParikshaLab', 'Book a free ParikshaLab demo for your school or coaching institute. WhatsApp or call +91 80881 58012, or email admin.parikshalab@gmail.com.', contact)
+page('contact.html', 'Book a Free Demo | ParikshaLab CBT Platform', 'Book a free ParikshaLab demo for your school or coaching institute. WhatsApp or call +91 80881 58012, or email admin.parikshalab@gmail.com.', contact)
+
+# ---------------------------------------------------------------- STUDENT MOCK TEST PAGES
+EXAMS = {
+ 'NEET': dict(file='neet-mock-test.html', name='NEET UG', other=('jee-main-mock-test.html', 'JEE Main mock tests'),
+   title='Free NEET Mock Test 2027 in CBT Format, NTA Pattern | ParikshaLab',
+   desc='Free full syllabus NEET UG mock tests on an NTA-style computer based test screen: 180 questions, 720 marks, +4/-1 marking, instant results with subject split and time per question. Join early access.',
+   kicker='NEET mock test &middot; CBT format',
+   h1='NEET mock tests on a <span class="grad">real exam screen.</span>',
+   lede='Full syllabus NEET UG mock tests on the official pattern, in an NTA-style computer based test format. Your first mocks are free. Early access is opening now.',
+   shot=('07_neet_physics', 'NEET mock test physics question with a circuit diagram on the CBT exam screen', 'NEET UG Full Syllabus Test 1'),
+   phone=('07_neet_zoology', 'NEET zoology statement question in the mock test app on a phone'),
+   spec='<dt>Questions</dt><dd>180 MCQs</dd><dt>Subjects</dt><dd>Physics, Chemistry, Botany, Zoology</dd><dt>Duration</dt><dd>180 minutes</dd><dt>Marking</dt><dd>+4 / &minus;1</dd><dt>Total</dt><dd>720 marks</dd>',
+   bank='21,783 NEET UG questions',
+   faq=[
+    ('Are the NEET mock tests free?', 'Your first NEET mock tests on ParikshaLab are free. A full test series with more mocks will be available as a paid plan. Join early access on WhatsApp and we will tell you as soon as the free mocks open.'),
+    ('Is NEET UG a computer based test?', 'NTA announces the exam mode for each year in the official NEET UG information bulletin, so check neet.nta.nic.in for the current mode. ParikshaLab NEET mocks follow the official paper pattern of 180 questions and 720 marks in a computer based format, so they build your speed and accuracy either way.'),
+    ('What is the NEET UG exam pattern?', '180 multiple choice questions across Physics, Chemistry, Botany and Zoology, 180 minutes, +4 for a correct answer and &minus;1 for a wrong one, for a total of 720 marks.'),
+    ('Can I take the mock test on my phone?', 'Yes. The mocks run in the Android and iOS apps and in any modern browser, and your answers are saved on every click, so a dropped connection costs nothing.'),
+    ('What do I get after each mock test?', 'Your score the moment you submit, a result PDF, every question with your answer and the correct key, marks lost to negative marking, a subject-wise split and the time you spent on each question.'),
+   ]),
+ 'JEE': dict(file='jee-main-mock-test.html', name='JEE Main', other=('neet-mock-test.html', 'NEET mock tests'),
+   title='Free JEE Main Mock Test 2027 in CBT Format, NTA Pattern | ParikshaLab',
+   desc='Free full syllabus JEE Main mock tests on an NTA-style computer based test screen: 75 questions, MCQ and numerical, 300 marks, instant results with subject split and time per question. Join early access.',
+   kicker='JEE Main mock test &middot; CBT format',
+   h1='JEE Main mock tests on the <span class="grad">real CBT screen.</span>',
+   lede='Full syllabus JEE Main mock tests on the official pattern, with the same timer, subject tabs, buttons and question palette as the NTA computer based test. Your first mocks are free. Early access is opening now.',
+   shot=('04_jee_palette_in_use', 'JEE Main CBT mock test with a graph based question and the NTA-style question palette', 'JEE Main Full Syllabus Mock'),
+   phone=('05_jee_mathematics', 'JEE Main mathematics question in the mock test app on a phone'),
+   spec='<dt>Questions</dt><dd>75 (60 MCQ + 15 numerical)</dd><dt>Subjects</dt><dd>Physics, Chemistry, Mathematics</dd><dt>Duration</dt><dd>180 minutes</dd><dt>Marking</dt><dd>+4 / &minus;1</dd><dt>Total</dt><dd>300 marks</dd>',
+   bank='11,476 JEE Main questions',
+   faq=[
+    ('Are the JEE Main mock tests free?', 'Your first JEE Main mock tests on ParikshaLab are free. A full test series with more mocks will be available as a paid plan. Join early access on WhatsApp and we will tell you as soon as the free mocks open.'),
+    ('Is JEE Main a computer based test?', 'Yes. NTA conducts JEE Main as a computer based test (CBT). ParikshaLab mocks use the same kind of screen: candidate details, a live timer, subject tabs, the four NTA buttons and a five-state question palette.'),
+    ('What is the JEE Main paper pattern?', '75 questions across Physics, Chemistry and Mathematics, 20 multiple choice and 5 numerical answer questions per subject, in 180 minutes, with +4 for a correct answer and &minus;1 for a wrong one, for a total of 300 marks. Always confirm the latest pattern in the official NTA information bulletin.'),
+    ('Can I practise numerical answer questions?', 'Yes. Numerical value questions are entered on screen exactly as in the real CBT, and equations and graphs are typeset so they read the way the paper prints them.'),
+    ('What do I get after each mock test?', 'Your score the moment you submit, a result PDF, every question with your answer and the correct key, marks lost to negative marking, a subject-wise split and the time you spent on each question.'),
+   ]),
+}
+def student_cta(e):
+    return f'<a class="btn btn-primary" href="{WA_STU[e]}" target="_blank" rel="noopener">Get early access on WhatsApp {svg("arrow")}</a>'
+for e, x in EXAMS.items():
+    body = phero(x['kicker'], x['h1'], x['lede'],
+      f'<div class="hero-cta" style="justify-content:center">{student_cta(e)}<a class="btn btn-ghost" href="#screen">See the exam screen</a></div><p class="form-note" style="margin-top:18px">First mocks free &middot; Android, iOS and any browser</p>') + f'''
+<section id="screen" style="padding-top:40px">
+  <div class="wrap split">
+    <div class="stage" data-tilt data-reveal="zoom">
+      <div class="glow-ring"></div>
+      {laptop(x['shot'][0], x['shot'][1], x['shot'][2])}
+    </div>
+    <div data-reveal>
+      <h2>Practise on the screen you will face.</h2>
+      <p class="lede">Many marks lost in a {x['name']} mock are not about the syllabus. They go to time pressure, unfamiliar buttons and careless negative marking. A computer based mock fixes that before exam day.</p>
+      <ul class="ticks">
+        <li><span><b>NTA-style interface.</b> Save &amp; Next, Mark for Review, Clear Response and a live timer, exactly where you expect them.</span></li>
+        <li><span><b>Five-state question palette.</b> Answered, not answered, marked and not visited, with live counts.</span></li>
+        <li><span><b>Questions from a big bank.</b> Drawn from {x['bank']}, each with its answer key and explanation.</span></li>
+        <li><span><b>Instant result analysis.</b> Score, subject split, negative marks and time on every question.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="sec-head center" data-reveal>
+      <h2>The {x['name']} pattern, <span class="grad">in every mock.</span></h2>
+    </div>
+    <div class="spec" data-stagger>
+      <div class="card"><span class="tag">{x['name']} mock test</span><dl>{x['spec']}</dl></div>
+      <div class="card"><span class="tag v">After you submit</span><dl><dt>Score</dt><dd>Instantly</dd><dt>Result PDF</dt><dd>One tap</dd><dt>Answer review</dt><dd>Every question</dd><dt>Subject split</dt><dd>Yes</dd><dt>Time per question</dt><dd>Yes</dd></dl></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap split rev">
+    <div class="fan" data-reveal="zoom">
+      {phone(x['phone'][0], x['phone'][1])}
+      {phone("04_jee_palette_open", "Question palette open on a phone during a mock test")}
+    </div>
+    <div data-reveal>
+      <h2>Your phone is enough.</h2>
+      <p class="lede">Take a full mock on Android, iOS or any browser. Answers are saved on every click, and if your battery dies you pick up exactly where you left off.</p>
+      <div class="hero-cta">{student_cta(e)}</div>
+      <p class="muted" style="margin-top:22px">Preparing for both? {arrow_link(x['other'][0], 'See ' + x['other'][1])}</p>
+    </div>
+  </div>
+</section>
+{faq(x['faq'], x['name'] + ' mock test questions')}
+<section style="padding-top:20px">
+  <div class="wrap">
+    <div class="cta" data-reveal="zoom">
+      <h2>Run a coaching institute or school?</h2>
+      <p>Give every batch {x['name']} mock tests under your own name, built from our question bank and yours, with reports for every student.</p>
+      <div class="hero-cta"><a class="btn btn-primary" href="contact.html">Book a campus demo {svg("arrow")}</a><a class="btn btn-ghost" href="index.html">ParikshaLab for institutes</a></div>
+    </div>
+  </div>
+</section>
+'''
+    ld = {"@context": "https://schema.org", "@graph": [faq_ld(x['faq']),
+      {"@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE},
+        {"@type": "ListItem", "position": 2, "name": x['name'] + " mock test", "item": SITE + x['file'].replace('.html', '')}]}]}
+    page(x['file'], x['title'], x['desc'], body, ld)
 
 # ---------------------------------------------------------------- 404
-nf = phero('404', 'This page <span class="grad">is not on the paper.</span>', 'The link may be old or mistyped.',
+nf = phero('Error 404', 'This page <span class="grad">is not on the paper.</span>', 'The link may be old or mistyped.',
   f'<div class="hero-cta" style="justify-content:center"><a class="btn btn-primary" href="index.html">Back to home {svg("arrow")}</a><a class="btn btn-ghost" href="contact.html">Contact us</a></div>')
 nf = nf.replace('class="page-hero"', 'class="page-hero" style="min-height:80vh;display:grid;align-content:center"')
 page('404.html', 'Page not found | ParikshaLab', 'This page could not be found.', nf, index=False)
 
-sm = ''.join(f'  <url><loc>{SITE}{p}</loc><lastmod>2026-09-30</lastmod><priority>{pr}</priority></url>\n' for p, pr in
-             [('', '1.0'), ('platform', '0.9'), ('qbank', '0.9'), ('reports', '0.8'), ('apps', '0.8'), ('about', '0.6'), ('contact', '0.7')])
+sm = ''.join(f'  <url><loc>{SITE}{p}</loc><lastmod>2026-10-06</lastmod><priority>{pr}</priority></url>\n' for p, pr in
+             [('', '1.0'), ('neet-mock-test', '0.9'), ('jee-main-mock-test', '0.9'), ('platform', '0.9'), ('qbank', '0.9'), ('reports', '0.8'), ('apps', '0.8'), ('about', '0.6'), ('contact', '0.7')])
 open(os.path.join(ROOT, 'sitemap.xml'), 'w', encoding='utf-8', newline='\n').write(
     '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + sm + '</urlset>\n')
 print('built')
