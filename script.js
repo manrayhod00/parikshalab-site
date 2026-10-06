@@ -5,6 +5,8 @@ var USER_COUNT = 1000;
 
 var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 var fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+// Crawlers snapshot the page mid-animation, so they get the final numbers straight away.
+var bot = navigator.webdriver || /bot|crawl|spider|slurp|google|bing|lighthouse|headless/i.test(navigator.userAgent);
 
 // nav: glass on scroll, burger, scroll progress
 var nav = document.getElementById('nav');
@@ -48,7 +50,7 @@ function runCount(el) {
   var target = el.dataset.count === 'users' ? USER_COUNT : +el.dataset.count;
   var suffix = el.dataset.suffix || '';
   var fmt = function (n) { return Math.round(n).toLocaleString('en-IN') + suffix; };
-  if (reduce) { el.textContent = fmt(target); return; }
+  if (reduce || bot) { el.textContent = fmt(target); return; }
   var run = el._run = (el._run || 0) + 1;   // a newer run cancels an older one
   var start = performance.now(), dur = 1800;
   (function tick(now) {
