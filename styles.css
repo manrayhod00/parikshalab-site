@@ -572,3 +572,20 @@ s.was{color:var(--ink-3);font-weight:500;text-decoration-thickness:2px;text-deco
 .p-price s.was{font-size:26px;margin-right:4px}
 .p-price .off{font-size:13px;margin-left:6px;vertical-align:8px}
 .off-lg{font-size:14px;padding:4px 12px;margin-top:14px}
+/* Two exams on the home ticket + the exam chooser dialog (2026-10-30) */
+.t-exam,.ch-exam{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;border:1.5px solid var(--line-2);background:var(--panel);color:var(--ink);text-decoration:none;transition:border-color .2s,transform .2s var(--ease)}
+.t-exam:hover,.ch-exam:hover{border-color:var(--blue);transform:translateY(-2px)}
+.t-ic{flex:none;width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font:800 13px var(--body);color:#fff}
+.t-ic.neet{background:linear-gradient(135deg,#059669,#10b981)}
+.t-ic.jee{background:linear-gradient(135deg,#3b5bff,#7c3aed)}
+.t-x{flex:1;min-width:0}
+.t-x b{display:block;font:700 17px var(--display);letter-spacing:-.01em}
+.t-x span{font-size:13px;color:var(--ink-3)}
+.t-arr{color:var(--blue);font-size:20px;font-weight:700}
+.t-arr svg{width:20px;height:20px}
+dialog.chooser{width:min(460px,calc(100vw - 32px));border:0;border-radius:24px;padding:28px;background:var(--surface);color:var(--ink);box-shadow:var(--panel-shadow)}
+dialog.chooser::backdrop{background:rgba(6,9,19,.55);backdrop-filter:blur(4px)}
+dialog.chooser h3{margin:0 34px 6px 0;font:700 22px/1.25 var(--display);letter-spacing:-.02em}
+dialog.chooser p{margin:0 0 18px;color:var(--ink-2);font-size:15px}
+dialog.chooser .ch-exam{margin-top:10px}
+.ch-x{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line-2);background:var(--panel);color:var(--ink-2);font-size:22px;line-height:1;cursor:pointer}

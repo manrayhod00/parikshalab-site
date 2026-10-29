@@ -183,3 +183,39 @@ if (form) form.addEventListener('submit', function (e) {
 
 var yr = document.getElementById('yr');
 if (yr) yr.textContent = new Date().getFullYear();
+
+// Exam chooser (2026-10-30): every "free mock" / "10 mocks" button asks NEET or JEE Main
+// first. Without JS the links still work: /free/ and /signup/ ask the same question.
+(function () {
+  var EXAMS = [
+    { code: 'neet', tag: 'NEET', name: 'NEET UG', meta: '180 questions · 720 marks · 3 hours' },
+    { code: 'jee', tag: 'JEE', name: 'JEE Main', meta: '75 questions · 300 marks · 3 hours' }
+  ];
+  var BASE = 'https://test.parikshalab.in';
+  var dlg = document.createElement('dialog');
+  dlg.className = 'chooser';
+  dlg.setAttribute('aria-labelledby', 'chooser-h');
+  document.body.appendChild(dlg);
+  function open(kind) {
+    var free = kind === 'free';
+    dlg.innerHTML = '<button class="ch-x" type="button" aria-label="Close">&times;</button>' +
+      '<h3 id="chooser-h">Which exam are you preparing for?</h3>' +
+      '<p>' + (free ? 'Your free full mock starts right away. No sign-up, just your name.'
+                    : '10 full mocks with report cards. <s class="was">&#8377;499</s> <b>&#8377;199</b> <span class="off">60% OFF</span>') + '</p>' +
+      EXAMS.map(function (e) {
+        var href = free ? BASE + '/free/' + e.code + '/' : BASE + '/signup/?exam=' + e.tag;
+        return '<a class="ch-exam" href="' + href + '"><span class="t-ic ' + e.code + '">' + e.tag + '</span>' +
+          '<span class="t-x"><b>' + e.name + '</b><span>' + e.meta + '</span></span><span class="t-arr">&rarr;</span></a>';
+      }).join('');
+    dlg.querySelector('.ch-x').onclick = function () { dlg.close(); };
+    if (dlg.showModal) dlg.showModal(); else location.href = BASE + (free ? '/free/' : '/signup/');
+  }
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('[data-free],[data-paid]');
+    if (!a) return;
+    e.preventDefault();
+    if (links && links.classList.contains('open')) burger.click();
+    open(a.hasAttribute('data-free') ? 'free' : 'paid');
+  });
+})();
