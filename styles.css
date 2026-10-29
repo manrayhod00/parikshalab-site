@@ -564,3 +564,11 @@ body.home .hero,body.home .page-hero{padding-top:150px}
 .hero-s h1{font-size:clamp(36px,4.4vw,60px)}
 .hero-s .hero-grid{grid-template-columns:1.05fr 1fr}
 @media (max-width:1080px){.hero-s .hero-grid{grid-template-columns:1fr}}
+/* Struck-out "was" price + % OFF badge (2026-10-30) */
+s.was{color:var(--ink-3);font-weight:500;text-decoration-thickness:2px;text-decoration-color:#e11d48}
+.off{display:inline-block;vertical-align:middle;padding:2px 9px;border-radius:99px;background:#e11d48;color:#fff;font:700 12px/1.5 var(--body);letter-spacing:.02em}
+.promo s.was{color:rgba(255,255,255,.7);text-decoration-color:#ffb4c2}
+.promo .off{font-size:11px;padding:1px 7px;margin-left:4px}
+.p-price s.was{font-size:26px;margin-right:4px}
+.p-price .off{font-size:13px;margin-left:6px;vertical-align:8px}
+.off-lg{font-size:14px;padding:4px 12px;margin-top:14px}
