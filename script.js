@@ -201,7 +201,7 @@ if (yr) yr.textContent = new Date().getFullYear();
     dlg.innerHTML = '<button class="ch-x" type="button" aria-label="Close">&times;</button>' +
       '<h3 id="chooser-h">Which exam are you preparing for?</h3>' +
       '<p>' + (free ? 'Your free full mock starts right away. No sign-up, just your name.'
-                    : '10 full mocks with report cards. <s class="was">&#8377;499</s> <b>&#8377;199</b> <span class="off">60% OFF</span>') + '</p>' +
+                    : 'Pick ONE exam: 10 full mocks with report cards for <s class="was">&#8377;499</s> <b>&#8377;199</b> <span class="off">60% OFF</span>. Want both? Buy each separately.') + '</p>' +
       EXAMS.map(function (e) {
         var href = free ? BASE + '/free/' + e.code + '/' : BASE + '/signup/?exam=' + e.tag;
         return '<a class="ch-exam" href="' + href + '"><span class="t-ic ' + e.code + '">' + e.tag + '</span>' +
